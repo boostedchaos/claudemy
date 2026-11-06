@@ -96,6 +96,8 @@ Render: `python3 <skill>/scripts/render_audio.py <lesson>/script.txt <lesson>/<h
 - Render every passing lesson in the background, about a minute each.
 - Create `class/playbook.md` with an effort ledger (lessons heard, things tried, rules kept) and an empty rules list.
 - `python3 <skill>/scripts/package_class.py <workspace>` builds audio zips under the upload cap and one combined cards file. Send those.
+- Course page (one offline file next to the audio, `class/course.html`): every lesson with its player, card, a read-along transcript and a playbook of kept rules. Build it with `python3 <skill>/scripts/build_course_page.py <workspace> ["<title>"] [--voices "Liam,Jessica"]` (title defaults to the topic; pass the names of the voices the audio used). Re-run it after each new lesson.
+- Read-along that follows the audio word by word (optional, needs `mlx-whisper` on Apple Silicon): per lesson, `python3 <skill>/scripts/time_words.py <lesson>` then `python3 <skill>/scripts/align.py <lesson>`, then rebuild the page. `align.py` prints how many script words matched; a low rate means the audio and script.txt disagree, so check before trusting the highlight.
 
 ## Reporting
 Short and concrete: what was made, how many lessons, total audio, what changed from the plan and why, what's still open. No streak talk, no pressure language.

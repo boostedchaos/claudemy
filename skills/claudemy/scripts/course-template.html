@@ -1,0 +1,628 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>__TITLE__</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='15' fill='%23a3322b'/%3E%3Cpath d='M13 10.5v11l9-5.5z' fill='%23fff'/%3E%3C/svg%3E">
+<style>
+:root {
+  color-scheme: light dark;
+  --bg: oklch(1 0 0);
+  --layer: oklch(0.975 0.006 25);
+  --ink: oklch(0.23 0.012 25);
+  --ink-2: oklch(0.44 0.014 25);
+  --line: oklch(0.905 0.008 25);
+  --primary: oklch(0.48 0.14 23);
+  --primary-strong: oklch(0.42 0.14 23);
+  --on-primary: oklch(1 0 0);
+  --primary-soft: oklch(0.955 0.028 23);
+  --primary-line: oklch(0.86 0.06 23);
+  --focus: oklch(0.55 0.16 255);
+  --shadow: 0 1px 2px oklch(0.2 0.02 25 / 0.06), 0 8px 24px oklch(0.2 0.02 25 / 0.06);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: oklch(0.155 0 0);
+    --layer: oklch(0.205 0.008 25);
+    --ink: oklch(0.945 0.006 25);
+    --ink-2: oklch(0.76 0.012 25);
+    --line: oklch(0.31 0.01 25);
+    --primary: oklch(0.73 0.12 30);
+    --primary-strong: oklch(0.8 0.1 32);
+    --on-primary: oklch(0.17 0.01 25);
+    --primary-soft: oklch(0.27 0.045 23);
+    --primary-line: oklch(0.42 0.08 25);
+    --focus: oklch(0.78 0.12 255);
+    --shadow: 0 1px 2px oklch(0 0 0 / 0.4), 0 8px 24px oklch(0 0 0 / 0.35);
+  }
+}
+:root[data-theme="light"] { color-scheme: light; }
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: oklch(0.155 0 0);
+  --layer: oklch(0.205 0.008 25);
+  --ink: oklch(0.945 0.006 25);
+  --ink-2: oklch(0.76 0.012 25);
+  --line: oklch(0.31 0.01 25);
+  --primary: oklch(0.73 0.12 30);
+  --primary-strong: oklch(0.8 0.1 32);
+  --on-primary: oklch(0.17 0.01 25);
+  --primary-soft: oklch(0.27 0.045 23);
+  --primary-line: oklch(0.42 0.08 25);
+  --focus: oklch(0.78 0.12 255);
+  --shadow: 0 1px 2px oklch(0 0 0 / 0.4), 0 8px 24px oklch(0 0 0 / 0.35);
+}
+:root {
+  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --z-sticky: 10; --z-mini: 20; --z-panel: 30;
+}
+* { box-sizing: border-box; }
+html { font-size: 18px; -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--sans); line-height: 1.6; }
+a { color: var(--primary); text-underline-offset: 3px; }
+a:hover { color: var(--primary-strong); }
+button { font: inherit; color: inherit; cursor: pointer; background: none; border: 0; padding: 0; }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; border-radius: 8px; }
+h1, h2, h3 { font-family: var(--serif); font-weight: 600; line-height: 1.15; text-wrap: balance; margin: 0; }
+p { margin: 0; text-wrap: pretty; }
+.skip { position: absolute; left: 12px; top: -80px; z-index: var(--z-panel); background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 10px; font-weight: 600; }
+.skip:focus { top: 12px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* ---------- top bar ---------- */
+.bar {
+  position: sticky; top: 0; z-index: var(--z-sticky);
+  background: color-mix(in oklch, var(--bg) 92%, transparent);
+  border-bottom: 1px solid var(--line);
+}
+@supports (backdrop-filter: blur(1px)) { .bar { backdrop-filter: saturate(1.2) blur(10px); } }
+.bar-in { max-width: 1180px; margin: 0 auto; padding: 10px 20px; display: flex; align-items: center; gap: 16px; }
+.brand { font-family: var(--serif); font-size: 1.05rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bar-actions { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+.pill {
+  display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 14px;
+  border: 1px solid var(--line); border-radius: 999px; font-size: 0.9rem; font-weight: 500;
+  transition: background-color 160ms var(--ease), border-color 160ms var(--ease);
+}
+.pill:hover { background: var(--layer); }
+.pill[aria-expanded="true"], .pill[aria-current="page"] { background: var(--primary-soft); border-color: var(--primary-line); }
+.pill .count { font-variant-numeric: tabular-nums; color: var(--primary); font-weight: 700; }
+
+/* ---------- course path ---------- */
+.path { max-width: 1180px; margin: 0 auto; padding: 16px 20px 0; display: flex; flex-wrap: wrap; gap: 6px 22px; align-items: center; }
+.arc-steps { display: flex; gap: 6px; align-items: center; }
+.step {
+  width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center;
+  font-size: 0.75rem; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--ink-2);
+  border: 1.5px solid var(--line); background: var(--bg);
+  transition: transform 160ms var(--ease), background-color 160ms var(--ease), border-color 160ms var(--ease);
+}
+.step:hover { border-color: var(--primary-line); transform: translateY(-1px); }
+.step.done { background: var(--primary-soft); border-color: var(--primary-line); color: var(--primary-strong); }
+.step[aria-current="step"] { background: var(--primary); border-color: var(--primary); color: var(--on-primary); }
+.step.soon { border-style: dashed; }
+.path-note { font-size: 0.85rem; color: var(--ink-2); flex-basis: 100%; }
+.path-note b { color: var(--ink); font-variant-numeric: tabular-nums; }
+
+/* lessons panel */
+.panel {
+  max-width: 1180px; margin: 12px auto 0; padding: 0 20px;
+}
+.panel-in { border: 1px solid var(--line); border-radius: 18px; padding: 20px; background: var(--bg); box-shadow: var(--shadow);
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px 28px; }
+.panel h2 { font-size: 1.15rem; }
+.panel .why { font-size: 0.9rem; color: var(--ink-2); margin: 4px 0 8px; }
+.panel ol { list-style: none; margin: 0; padding: 0; }
+.panel li button { width: 100%; text-align: left; display: flex; gap: 12px; align-items: baseline; padding: 8px 10px; border-radius: 10px; }
+.panel li button:hover { background: var(--layer); }
+.panel li button[aria-current="true"] { background: var(--primary-soft); }
+.panel .n { color: var(--ink-2); font-variant-numeric: tabular-nums; width: 1.4rem; flex: none; }
+.panel .state { margin-left: auto; font-size: 0.8rem; color: var(--ink-2); }
+
+/* ---------- lesson ---------- */
+main { max-width: 1180px; margin: 0 auto; padding: 28px 20px 120px; }
+.lesson { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 56px; align-items: start; }
+@media (max-width: 960px) { .lesson { grid-template-columns: minmax(0, 1fr); gap: 40px; } }
+.listen { position: sticky; top: 76px; }
+@media (min-width: 961px) { .listen .words { max-height: max(14rem, calc(100vh - 500px)); } }
+@media (max-width: 960px) { .listen { position: static; } }
+.where { color: var(--ink-2); font-size: 0.95rem; }
+.where b { color: var(--primary); font-weight: 600; }
+.title { font-size: clamp(2.3rem, 1.6rem + 2.6vw, 3.6rem); letter-spacing: -0.015em; margin: 6px 0 22px; }
+
+/* player */
+.player {
+  background: var(--layer); border-radius: 22px; padding: 18px 20px 16px;
+  display: grid; grid-template-columns: auto 1fr; gap: 6px 18px; align-items: center;
+}
+.play {
+  width: 64px; height: 64px; border-radius: 50%; background: var(--primary); color: var(--on-primary);
+  display: grid; place-items: center; grid-row: span 2;
+  box-shadow: 0 6px 18px color-mix(in oklch, var(--primary) 35%, transparent);
+  transition: transform 160ms var(--ease), background-color 160ms var(--ease);
+}
+.play:hover { background: var(--primary-strong); }
+.play:active { transform: scale(0.96); }
+.play svg { width: 26px; height: 26px; fill: currentColor; }
+.seek { width: 100%; accent-color: var(--primary); height: 28px; margin: 0; cursor: pointer; }
+.ctrl { display: flex; align-items: center; gap: 4px; font-size: 0.9rem; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.ctrl .time { margin-right: auto; }
+.ghost { min-height: 36px; min-width: 44px; padding: 0 10px; border-radius: 10px; font-weight: 600; color: var(--ink); }
+.ghost:hover { background: color-mix(in oklch, var(--ink) 7%, transparent); }
+.ghost svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; vertical-align: -3px; }
+
+/* read along */
+.read-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 22px 0 10px; }
+.read-head h2 { font-size: 1.25rem; }
+.switch { display: inline-flex; align-items: center; gap: 10px; font-size: 0.9rem; color: var(--ink-2); min-height: 40px; }
+.switch .track { width: 42px; height: 24px; border-radius: 999px; background: var(--line); position: relative; transition: background-color 160ms var(--ease); }
+.switch .track::after { content: ""; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: var(--bg); box-shadow: 0 1px 2px oklch(0 0 0 / 0.25); transition: transform 180ms var(--ease); }
+.switch[aria-checked="true"] .track { background: var(--primary); }
+.switch[aria-checked="true"] .track::after { transform: translateX(18px); }
+.words-box { position: relative; }
+.words {
+  max-height: min(26rem, 52vh); overflow-y: auto; overscroll-behavior: contain;
+  border: 1px solid var(--line); border-radius: 18px; padding: 10px; scroll-padding: 24px;
+}
+.turn { display: grid; grid-template-columns: 4.6rem minmax(0, 1fr); gap: 2px 10px; padding: 10px 12px; border-radius: 12px;
+  transition: background-color 200ms var(--ease); cursor: pointer; }
+.turn:hover { background: var(--layer); }
+.turn.now { background: var(--primary-soft); }
+.turn:focus-visible { outline-offset: -3px; }
+.who { font-size: 0.8rem; font-weight: 700; color: var(--ink-2); padding-top: 4px; }
+.who.b { color: var(--primary); }
+.said { font-size: 1.05rem; color: var(--ink-2); line-height: 1.65; transition: color 200ms var(--ease); }
+.turn.now .said { color: var(--ink); }
+.w { border-radius: 4px; transition: color 120ms linear, box-shadow 120ms linear; }
+.w.on { color: var(--primary-strong); box-shadow: inset 0 -2px 0 var(--primary); }
+.back {
+  position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%);
+  background: var(--ink); color: var(--bg); border-radius: 999px; padding: 8px 16px; font-size: 0.9rem; font-weight: 600;
+  box-shadow: var(--shadow);
+}
+.untimed { font-size: 0.85rem; color: var(--ink-2); margin-top: 8px; }
+
+/* card side */
+.card-side { display: grid; gap: 44px; }
+.side-h { font-size: 1.45rem; margin-bottom: 14px; }
+.idea-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+.idea-list li { font-family: var(--serif); font-size: 1.3rem; line-height: 1.4; padding-left: 26px; position: relative; }
+.idea-list li::before { content: ""; position: absolute; left: 2px; top: 0.62em; width: 10px; height: 10px; border-radius: 50%; background: var(--primary); }
+.facts { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.facts > div { padding: 16px 0; }
+.facts > div + div { padding-left: 22px; margin-left: 22px; border-left: 1px solid var(--line); }
+@media (max-width: 560px) { .facts { grid-template-columns: 1fr; } .facts > div + div { padding-left: 0; margin-left: 0; border-left: 0; border-top: 1px solid var(--line); } }
+.facts h3 { font-family: var(--sans); font-size: 0.95rem; font-weight: 700; margin-bottom: 4px; }
+.facts p { color: var(--ink-2); }
+
+.try { background: var(--layer); border-radius: 22px; padding: 22px 22px 24px; }
+.try-top { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 14px; margin-bottom: 12px; }
+.try-top h2 { font-size: 1.45rem; margin-right: auto; }
+.tag { font-size: 0.85rem; font-weight: 600; color: var(--ink-2); }
+.tag + .tag::before { content: "\00b7"; margin-right: 14px; color: var(--ink-2); }
+.checks { list-style: none; margin: 0 0 18px; padding: 0; display: grid; gap: 4px; }
+.checks label { display: grid; grid-template-columns: 28px 1fr; gap: 10px; align-items: start; padding: 8px 6px; border-radius: 10px; cursor: pointer; }
+.checks label:hover { background: color-mix(in oklch, var(--ink) 5%, transparent); }
+.checks input { width: 22px; height: 22px; margin: 3px 0 0; accent-color: var(--primary); cursor: pointer; }
+.checks input:checked + span { color: var(--ink-2); text-decoration: line-through; text-decoration-color: color-mix(in oklch, var(--ink-2) 60%, transparent); }
+
+.btn {
+  display: inline-flex; align-items: center; gap: 10px; min-height: 48px; padding: 0 22px; border-radius: 999px;
+  font-weight: 600; border: 1.5px solid var(--primary); color: var(--primary);
+  transition: background-color 160ms var(--ease), color 160ms var(--ease), transform 160ms var(--ease);
+}
+.btn:hover { background: var(--primary-soft); }
+.btn:active { transform: scale(0.98); }
+.btn.solid { background: var(--primary); color: var(--on-primary); }
+.btn.solid:hover { background: var(--primary-strong); border-color: var(--primary-strong); }
+.btn[aria-pressed="true"] { background: var(--primary-soft); color: var(--primary-strong); border-color: var(--primary-line); }
+.btn svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+
+.rule blockquote { margin: 0 0 18px; font-family: var(--serif); font-size: clamp(1.5rem, 1.2rem + 1vw, 1.95rem); line-height: 1.3; font-weight: 600; position: relative; padding-top: 34px; }
+.rule blockquote::before { content: "\201C"; position: absolute; top: -18px; left: -4px; font-size: 4.6rem; line-height: 1; color: var(--primary); opacity: 0.85; }
+.rule .hint { color: var(--ink-2); font-size: 0.95rem; margin-bottom: 14px; }
+
+.deeper ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.deeper li { display: flex; flex-direction: column; }
+.deeper .host { font-size: 0.85rem; color: var(--ink-2); }
+
+.foot { margin-top: 64px; padding-top: 22px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; gap: 16px; }
+.nextprev { display: flex; flex-direction: column; gap: 2px; text-align: left; padding: 10px 14px; border-radius: 14px; max-width: 48%; }
+.nextprev:hover { background: var(--layer); }
+.nextprev.next { text-align: right; margin-left: auto; }
+.nextprev small { color: var(--ink-2); font-size: 0.85rem; }
+.nextprev span { font-family: var(--serif); font-weight: 600; font-size: 1.1rem; }
+.skip-note { color: var(--ink-2); font-size: 0.95rem; margin-top: 18px; }
+
+/* not made yet + playbook */
+.soon-box { max-width: 680px; padding: 8px 0 0; }
+.soon-box .idea { font-family: var(--serif); font-size: 1.45rem; line-height: 1.4; margin-bottom: 18px; }
+.soon-box .note { color: var(--ink-2); }
+.book { max-width: 760px; }
+.book ol { list-style: none; margin: 26px 0 0; padding: 0; counter-reset: r; }
+.book li { counter-increment: r; display: grid; grid-template-columns: 3rem 1fr; gap: 12px; padding: 20px 0; border-top: 1px solid var(--line); }
+.book li::before { content: counter(r); font-family: var(--serif); font-size: 1.6rem; color: var(--primary); line-height: 1.2; }
+.book .r { font-family: var(--serif); font-size: 1.35rem; line-height: 1.35; font-weight: 600; }
+.book .from { color: var(--ink-2); font-size: 0.9rem; margin-top: 4px; }
+.empty { color: var(--ink-2); margin-top: 16px; max-width: 34rem; }
+
+/* mini player (phone, when the main player scrolls away) */
+.mini {
+  position: fixed; left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom)); z-index: var(--z-mini);
+  display: flex; align-items: center; gap: 12px; padding: 8px 14px 8px 8px; border-radius: 999px;
+  background: var(--ink); color: var(--bg); box-shadow: var(--shadow);
+  transform: translateY(140%); transition: transform 220ms var(--ease);
+}
+.mini.show { transform: none; }
+.mini .play { width: 44px; height: 44px; box-shadow: none; grid-row: auto; }
+.mini .play svg { width: 18px; height: 18px; }
+.mini .t { font-family: var(--serif); font-weight: 600; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mini .tt { font-size: 0.85rem; font-variant-numeric: tabular-nums; opacity: 0.85; }
+@media (min-width: 961px) { .mini { display: none; } }
+
+.ctrl .time, .ghost { white-space: nowrap; }
+.brand .short { display: none; }
+@media (max-width: 560px) {
+  .brand .long { display: none; }
+  .brand .short { display: inline; }
+  .player { grid-template-columns: auto minmax(0, 1fr); padding: 16px; }
+  .player .play { grid-row: auto; }
+  .ctrl { grid-column: 1 / -1; }
+  .turn { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .who { padding-top: 0; }
+  main { padding-left: 16px; padding-right: 16px; }
+  .bar-in, .path, .panel { padding-left: 16px; padding-right: 16px; }
+}
+.view { animation: in 220ms var(--ease) both; }
+@keyframes in { from { opacity: 0.001; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: 0ms !important; animation: none !important; }
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the lesson</a>
+<header class="bar">
+  <div class="bar-in">
+    <div class="brand" id="brand"></div>
+    <div class="bar-actions">
+      <button class="pill" id="lessons-btn" aria-expanded="false" aria-controls="panel">Lessons</button>
+      <button class="pill" id="book-btn">Playbook <span class="count" id="kept-count">0</span></button>
+    </div>
+  </div>
+</header>
+<nav class="path" id="path" aria-label="Course path"></nav>
+<div class="panel" id="panel" hidden></div>
+<main id="main" tabindex="-1"></main>
+<div class="mini" id="mini" aria-hidden="true"></div>
+
+<script>
+const COURSE = /*COURSE*/null;
+
+const KEY = "claudemy:" + COURSE.slug + ":v2";
+// Saved progress is checked field by field: a damaged or older save falls back to defaults, never a blank page.
+function loadState() {
+  const st = { heard: {}, tried: {}, kept: {}, steps: {}, current: 1, speed: 1, words: true };
+  let s = null;
+  try { s = JSON.parse(localStorage.getItem(KEY)); } catch (e) {}
+  if (!s || typeof s !== "object" || Array.isArray(s)) return st;
+  const isMap = (v) => v && typeof v === "object" && !Array.isArray(v);
+  for (const k of ["heard", "tried", "steps"]) if (isMap(s[k])) st[k] = Object.fromEntries(Object.entries(s[k]).filter(([, v]) => v === true));
+  if (isMap(s.kept)) st.kept = Object.fromEntries(Object.entries(s.kept).filter(([, v]) => typeof v === "string"));
+  if (s.current === "playbook" || Number.isInteger(s.current)) st.current = s.current;
+  if ([0.75, 1, 1.25].includes(s.speed)) st.speed = s.speed;
+  if (typeof s.words === "boolean") st.words = s.words;
+  return st;
+}
+let state = loadState();
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+
+const $ = (s, r = document) => r.querySelector(s);
+const cap = (s) => s ? s[0].toUpperCase() + s.slice(1) : s;
+function el(tag, attrs, ...kids) {
+  const n = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs || {})) {
+    if (k === "class") n.className = v;
+    else if (k === "html") n.innerHTML = v;
+    else if (k.startsWith("on")) n.addEventListener(k.slice(2), v);
+    else if (v !== false && v != null) n.setAttribute(k, v === true ? "" : v);
+  }
+  for (const k of kids.flat()) if (k != null && k !== false) n.append(k.nodeType ? k : document.createTextNode(k));
+  return n;
+}
+function rich(s) {
+  const span = el("span");
+  s.split(/(\*\*[^*]+\*\*)/).forEach(p => span.append(p.startsWith("**") && p.endsWith("**") ? el("strong", {}, p.slice(2, -2)) : p));
+  return span;
+}
+const ICON = {
+  play: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg>',
+  pause: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6.5" y="5" width="4" height="14" rx="1.2"/><rect x="13.5" y="5" width="4" height="14" rx="1.2"/></svg>',
+  back: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.3-5.6"/><path d="M4 4v4h4"/></svg>',
+  fwd: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.3-5.6"/><path d="M20 4v4h-4"/></svg>',
+  check: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
+  star: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.9L12 16.9l-5.2 2.8 1-5.9-4.3-4.1 5.9-.8z"/></svg>'
+};
+const fmt = (t) => { t = Math.max(0, Math.floor(t || 0)); return Math.floor(t / 60) + ":" + String(t % 60).padStart(2, "0"); };
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+const lessons = COURSE.arcs.flatMap(a => a.lessons);
+const byNum = Object.fromEntries(lessons.map(l => [l.n, l]));
+const arcOf = (l) => COURSE.arcs.find(a => a.lessons.includes(l));
+const count = (o) => Object.keys(o).length;
+
+/* ---------- chrome ---------- */
+function renderChrome() {
+  $("#brand").replaceChildren(el("span", { class: "long" }, COURSE.title), el("span", { class: "short", "aria-hidden": "true" }, COURSE.short || COURSE.title));
+  $("#kept-count").textContent = count(state.kept);
+  $("#book-btn").setAttribute("aria-current", state.current === "playbook" ? "page" : "false");
+  const path = $("#path"); path.replaceChildren();
+  for (const arc of COURSE.arcs) {
+    path.append(el("div", { class: "arc-steps", role: "group", "aria-label": arc.title },
+      arc.lessons.map(l => el("button", {
+        class: "step" + (!l.made ? " soon" : "") + (state.heard[l.n] || state.tried[l.n] ? " done" : ""),
+        "aria-current": state.current === l.n ? "step" : false,
+        "aria-label": `Lesson ${l.n}: ${l.handle}${l.made ? "" : " (coming soon)"}`, title: `${l.n}. ${l.handle}`,
+        onclick: () => go(l.n) }, String(l.n)))));
+  }
+  path.append(el("p", { class: "path-note" },
+    el("b", {}, String(count(state.heard))), " heard · ", el("b", {}, String(count(state.tried))), " tried · ",
+    el("b", {}, String(count(state.kept))), count(state.kept) === 1 ? " rule kept" : " rules kept"));
+  const panel = $("#panel"); panel.replaceChildren(el("div", { class: "panel-in" }, COURSE.arcs.map(arc => el("section", {},
+    el("h2", {}, cap(arc.title)), el("p", { class: "why" }, cap(arc.why)),
+    el("ol", {}, arc.lessons.map(l => el("li", {}, el("button", { "aria-current": state.current === l.n ? "true" : "false", onclick: () => go(l.n) },
+      el("span", { class: "n" }, String(l.n)), el("span", {}, l.handle),
+      el("span", { class: "state" }, !l.made ? "soon" : state.tried[l.n] ? "tried" : state.heard[l.n] ? "heard" : "")))))))));
+}
+$("#lessons-btn").addEventListener("click", () => {
+  const p = $("#panel"), open = p.hidden; p.hidden = !open; $("#lessons-btn").setAttribute("aria-expanded", String(open));
+});
+$("#book-btn").addEventListener("click", () => go("playbook"));
+document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !$("#panel").hidden) { $("#panel").hidden = true; $("#lessons-btn").setAttribute("aria-expanded", "false"); $("#lessons-btn").focus(); } });
+
+function go(n) {
+  stopAudio();
+  state.current = n; save();
+  $("#panel").hidden = true; $("#lessons-btn").setAttribute("aria-expanded", "false");
+  render(); window.scrollTo({ top: 0, behavior: "auto" }); $("#main").focus({ preventScroll: true });
+}
+
+/* ---------- audio + read-along ---------- */
+let audio = null, raf = 0, flat = [], curWord = -1, following = true, io = null;
+function hideMini() {
+  const m = $("#mini"); m.classList.remove("show"); m.setAttribute("aria-hidden", "true");
+  m.querySelectorAll("button").forEach(b => b.tabIndex = -1);
+}
+function stopAudio() { if (audio) audio.pause(); cancelAnimationFrame(raf); if (io) io.disconnect(); io = null; hideMini(); }
+
+function wordAt(t) {
+  let lo = 0, hi = flat.length - 1, ans = -1;
+  while (lo <= hi) { const m = (lo + hi) >> 1; if (flat[m].s <= t + 0.04) { ans = m; lo = m + 1; } else hi = m - 1; }
+  return ans;
+}
+function highlight(t) {
+  const i = wordAt(t);
+  if (i === curWord) return i;
+  const prev = flat[curWord];
+  if (prev) { prev.node.classList.remove("on"); if (!flat[i] || flat[i].turn !== prev.turn) prev.turnNode.classList.remove("now"); }
+  curWord = i;
+  const w = flat[i];
+  if (w) {
+    w.node.classList.add("on");
+    if (!w.turnNode.classList.contains("now")) {
+      w.turnNode.classList.add("now");
+      if (following && state.words) {
+        const box = $("#words");
+        if (box) box.scrollTo({ top: w.turnNode.offsetTop - box.clientHeight / 3, behavior: reduce ? "auto" : "smooth" });
+      }
+    }
+  }
+  return i;
+}
+window.__highlightAt = (t) => { const i = highlight(t); const w = flat[i]; return w ? { index: i, word: w.w, s: w.s, line: w.turn } : null; };
+
+function tick() {
+  if (!audio) return;
+  syncTime();
+  highlight(audio.currentTime);
+  if (!audio.paused) raf = requestAnimationFrame(tick);
+}
+// Every frame while playing: moves the slider; touches text only when the shown second changes.
+let shownSec = -1, shownPlaying = null;
+function syncTime() {
+  if (!audio) return;
+  const t = audio.currentTime, d = audio.duration || 0;
+  const seek = $("#seek"); if (seek && document.activeElement !== seek) { seek.value = d ? (t / d) * 1000 : 0; }
+  const sec = Math.floor(t);
+  if (sec !== shownSec) {
+    shownSec = sec;
+    if (seek) seek.setAttribute("aria-valuetext", `${fmt(t)} of ${fmt(d)}`);
+    const tm = $("#time"); if (tm) tm.textContent = `${fmt(t)} / ${fmt(d)}`;
+    const mt = $("#mini-time"); if (mt) mt.textContent = fmt(t);
+  }
+}
+// On play / pause / load / seek / end only, never in the frame loop.
+function syncUI() {
+  if (!audio) return;
+  shownSec = -1; syncTime();
+  const playing = !audio.paused;
+  if (playing === shownPlaying) return;
+  shownPlaying = playing;
+  document.querySelectorAll("[data-play]").forEach(b => { b.innerHTML = playing ? ICON.pause : ICON.play; b.setAttribute("aria-label", playing ? "Pause" : "Play"); });
+}
+function togglePlay() { if (!audio) return; if (audio.paused) audio.play().catch(() => {}); else audio.pause(); }
+
+/* ---------- lesson view ---------- */
+function renderLesson(l) {
+  const main = $("#main"); main.replaceChildren(); flat = []; curWord = -1; following = true;
+  const arc = arcOf(l), i = lessons.indexOf(l);
+  const where = el("p", { class: "where" }, el("b", {}, `Lesson ${l.n}`), ` of ${lessons.length} · ${cap(arc.title)}`);
+  const title = el("h1", { class: "title" }, l.handle);
+  const wrap = el("div", { class: "view" });
+
+  if (!l.made) {
+    audio = null; $("#mini").replaceChildren();
+    wrap.append(el("div", { class: "soon-box" }, where, title, el("p", { class: "idea" }, cap(l.idea)),
+      el("p", { class: "note" }, "This lesson is not recorded yet. Nothing is lost by waiting, and skipping costs nothing.")), foot(i));
+    main.append(wrap); return;
+  }
+
+  audio = new Audio(l.audio); audio.preload = "metadata"; audio.playbackRate = state.speed; shownPlaying = null; shownSec = -1;
+  audio.addEventListener("play", () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(tick); syncUI(); });
+  audio.addEventListener("pause", syncUI);
+  audio.addEventListener("loadedmetadata", syncUI);
+  audio.addEventListener("seeked", () => { highlight(audio.currentTime); syncUI(); });
+  audio.addEventListener("ended", () => { state.heard[l.n] = true; save(); renderChrome(); syncUI(); });
+
+  const speedVal = el("span", {}, state.speed + "×");
+  const speedBtn = el("button", { class: "ghost", title: "Playback speed", onclick: () => {
+    const order = [1, 1.25, 0.75]; state.speed = order[(order.indexOf(state.speed) + 1) % order.length];
+    audio.playbackRate = state.speed; speedVal.textContent = state.speed + "×"; save(); } },
+    el("span", { class: "sr" }, "Playback speed "), speedVal);
+  const player = el("div", { class: "player", role: "group", "aria-label": "Audio player" },
+    el("button", { class: "play", "data-play": "", "aria-label": "Play", html: ICON.play, onclick: togglePlay }),
+    el("input", { class: "seek", id: "seek", type: "range", min: "0", max: "1000", value: "0", step: "1", "aria-label": "Position in lesson",
+      oninput: (e) => { if (audio.duration) { audio.currentTime = (e.target.value / 1000) * audio.duration; highlight(audio.currentTime); syncUI(); } } }),
+    el("div", { class: "ctrl" },
+      el("span", { class: "time", id: "time" }, `0:00 / ${l.length}`),
+      el("button", { class: "ghost", "aria-label": "Back 10 seconds", title: "Back 10 seconds", html: ICON.back + " 10", onclick: () => { audio.currentTime = Math.max(0, audio.currentTime - 10); } }),
+      el("button", { class: "ghost", "aria-label": "Forward 10 seconds", title: "Forward 10 seconds", html: "10 " + ICON.fwd, onclick: () => { audio.currentTime = Math.min(audio.duration || 0, audio.currentTime + 10); } }),
+      speedBtn));
+
+  // read-along
+  const box = el("div", { class: "words", id: "words", role: "region", "aria-label": "Read along", "aria-describedby": "words-help", tabindex: "0" });
+  l.transcript.forEach((t, ti) => {
+    const said = el("span", { class: "said" });
+    const turnNode = el("div", { class: "turn", "data-s": t.s ?? "", tabindex: "-1", role: l.timed ? "button" : null },
+      el("span", { class: "who" + (t.who === "B" ? " b" : "") }, COURSE.voices[t.who]), said);
+    t.words.forEach((w, wi) => {
+      const node = el("span", { class: "w" }, w.w);
+      said.append(node, wi < t.words.length - 1 ? " " : "");
+      if (l.timed) flat.push({ w: w.w, s: w.s, e: w.e, node, turn: ti, turnNode });
+    });
+    if (l.timed) {
+      const playFrom = (e) => {
+        const hit = flat.find(f => f.node === e.target) || flat.find(f => f.turn === ti);
+        audio.currentTime = hit.s; following = true; backBtn.hidden = true; if (audio.paused) audio.play().catch(() => {});
+      };
+      turnNode.addEventListener("click", playFrom);
+      turnNode.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); playFrom(e); } });
+    }
+    box.append(turnNode);
+  });
+  const backBtn = el("button", { class: "back", hidden: true, onclick: () => {
+    following = true; backBtn.hidden = true; const w = flat[curWord];
+    if (w) box.scrollTo({ top: w.turnNode.offsetTop - box.clientHeight / 3, behavior: reduce ? "auto" : "smooth" }); } }, "Back to the words");
+  const stopFollow = () => { if (audio && !audio.paused && following) { following = false; backBtn.hidden = false; } };
+  ["wheel", "touchmove"].forEach(ev => box.addEventListener(ev, stopFollow, { passive: true }));
+  box.addEventListener("keydown", (e) => {
+    if (!["ArrowUp", "ArrowDown", "PageUp", "PageDown", "Home", "End"].includes(e.key)) return;
+    stopFollow();
+    if (e.key !== "ArrowUp" && e.key !== "ArrowDown") return;
+    const lines = [...box.querySelectorAll(".turn")];
+    const at = lines.indexOf(document.activeElement);
+    const from = at >= 0 ? at : Math.max(0, lines.findIndex(n => n.classList.contains("now")));
+    const next = at < 0 ? from : Math.min(lines.length - 1, Math.max(0, from + (e.key === "ArrowDown" ? 1 : -1)));
+    e.preventDefault(); lines[next].focus();
+  });
+  const wordsBox = el("div", { class: "words-box", hidden: !state.words }, box, backBtn,
+    el("p", { class: "sr", id: "words-help" }, l.timed ? "Use the up and down arrows to move between lines. Press Enter to play from a line." : ""));
+  const sw = el("button", { class: "switch", role: "switch", "aria-checked": String(state.words), onclick: () => {
+    state.words = !state.words; save(); sw.setAttribute("aria-checked", String(state.words)); wordsBox.hidden = !state.words; } },
+    "Show the words", el("span", { class: "track", "aria-hidden": "true" }));
+
+  const listen = el("section", { class: "listen", "aria-label": "Listen" }, where, title, player,
+    el("div", { class: "read-head" }, el("h2", {}, "Read along"), sw), wordsBox,
+    l.timed ? null : el("p", { class: "untimed" }, "Words for this lesson are not timed yet, so they will not follow the audio."));
+
+  // card side
+  const triedBtn = el("button", { class: "btn solid", "aria-pressed": String(!!state.tried[l.n]), onclick: () => {
+    if (state.tried[l.n]) delete state.tried[l.n]; else state.tried[l.n] = true; save(); renderChrome(); paintTried(); } });
+  const paintTried = () => { const on = !!state.tried[l.n]; triedBtn.setAttribute("aria-pressed", String(on));
+    triedBtn.className = on ? "btn" : "btn solid"; triedBtn.innerHTML = on ? ICON.check + " I tried it" : "I tried it"; };
+  paintTried();
+  const keepBtn = el("button", { class: "btn", "aria-pressed": String(!!state.kept[l.n]), onclick: () => {
+    if (state.kept[l.n]) delete state.kept[l.n]; else state.kept[l.n] = l.rule; save(); renderChrome(); paintKeep(); } });
+  const paintKeep = () => { const on = !!state.kept[l.n]; keepBtn.setAttribute("aria-pressed", String(on));
+    keepBtn.innerHTML = on ? ICON.star + " In my playbook" : "Keep this rule"; };
+  paintKeep();
+  const stepKey = (k) => l.n + ":" + k;
+  const side = el("div", { class: "card-side" },
+    el("section", { "aria-labelledby": "h-idea" }, el("h2", { class: "side-h", id: "h-idea" }, "The idea"),
+      el("ul", { class: "idea-list" }, l.idea3.map(t => el("li", {}, rich(t))))),
+    el("div", { class: "facts" },
+      el("div", {}, el("h3", {}, "What gets better"), el("p", {}, cap(l.impact))),
+      el("div", {}, el("h3", {}, "Who says it"), el("p", {}, l.who))),
+    el("section", { class: "try", "aria-labelledby": "h-try" },
+      el("div", { class: "try-top" }, el("h2", { id: "h-try" }, "Try it"), el("span", { class: "tag" }, l.tryEnergy), el("span", { class: "tag" }, l.tryTime)),
+      el("ul", { class: "checks" }, l.trySteps.map((t, k) => el("li", {}, el("label", {},
+        el("input", { type: "checkbox", checked: !!state.steps[stepKey(k)], onchange: (e) => { if (e.target.checked) state.steps[stepKey(k)] = true; else delete state.steps[stepKey(k)]; save(); } }),
+        rich(t))))),
+      triedBtn),
+    el("section", { class: "rule", "aria-labelledby": "h-rule" }, el("h2", { class: "sr", id: "h-rule" }, "Rule to keep"),
+      el("blockquote", {}, l.rule), el("p", { class: "hint" }, "A rule to keep, in your own playbook."), keepBtn),
+    el("section", { class: "deeper", "aria-labelledby": "h-deep" }, el("h2", { class: "side-h", id: "h-deep" }, "Go deeper, if you like"),
+      el("ul", {}, l.links.map(x => el("li", {}, el("a", { href: x.url, target: "_blank", rel: "noopener" }, cap(x.text)),
+        el("span", { class: "host" }, new URL(x.url).hostname.replace(/^www\./, "")))))));
+
+  wrap.append(el("div", { class: "lesson" }, listen, side), foot(i));
+  main.append(wrap);
+
+  // mini player for phones
+  const mini = $("#mini"); mini.replaceChildren(
+    el("button", { class: "play", "data-play": "", "aria-label": "Play", tabindex: "-1", html: ICON.play, onclick: togglePlay }),
+    el("span", { class: "t" }, l.handle), el("span", { class: "tt", id: "mini-time" }, "0:00"));
+  hideMini();
+  if ("IntersectionObserver" in window) {
+    io = new IntersectionObserver(([en]) => {
+      const show = !en.isIntersecting && audio && (!audio.paused || audio.currentTime > 0);
+      mini.classList.toggle("show", !!show); mini.setAttribute("aria-hidden", String(!show));
+      mini.querySelectorAll("button").forEach(b => b.tabIndex = show ? 0 : -1);
+    }, { threshold: 0 });
+    io.observe(player);
+  }
+  syncUI();
+}
+
+function foot(i) {
+  const prev = lessons[i - 1], next = lessons[i + 1];
+  return el("div", {},
+    el("p", { class: "skip-note" }, "Skip any lesson. It costs nothing. The next lesson is just the next lesson."),
+    el("nav", { class: "foot", "aria-label": "Previous and next lesson" },
+      prev ? el("button", { class: "nextprev", onclick: () => go(prev.n) }, el("small", {}, "← Previous"), el("span", {}, prev.handle)) : el("span"),
+      next ? el("button", { class: "nextprev next", onclick: () => go(next.n) }, el("small", {}, "Next →"), el("span", {}, next.handle)) : null));
+}
+
+function renderPlaybook() {
+  const main = $("#main"); main.replaceChildren(); audio = null;
+  const kept = lessons.filter(l => state.kept[l.n]);
+  main.append(el("div", { class: "view book" },
+    el("p", { class: "where" }, "Your rules, from the lessons you chose to keep"),
+    el("h1", { class: "title" }, "My playbook"),
+    kept.length ? el("ol", {}, kept.map(l => el("li", {}, el("div", {}, el("p", { class: "r" }, state.kept[l.n]),
+      el("p", { class: "from" }, `From lesson ${l.n}, ${l.handle}`)))))
+      : el("p", { class: "empty" }, "Nothing here yet. When a rule feels worth keeping, press “Keep this rule” on its lesson and it will wait for you here.")));
+}
+
+function render() {
+  document.title = COURSE.title;
+  try {
+    renderChrome();
+    if (state.current === "playbook") renderPlaybook();
+    else renderLesson(byNum[state.current] || lessons[0]);
+  } catch (err) {
+    console.error(err);
+    $("#main").replaceChildren(el("div", { class: "view soon-box" },
+      el("h1", { class: "title" }, "Something went wrong"),
+      el("p", { class: "note" }, "The page could not show this lesson. Resetting clears your saved progress on this device, then reloads."),
+      el("p", {}, el("button", { class: "btn solid", onclick: () => { try { localStorage.removeItem(KEY); } catch (e) {} location.reload(); } }, "Reset my progress"))));
+  }
+}
+render();
+</script>
+</body>
+</html>
